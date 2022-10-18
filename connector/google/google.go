@@ -257,6 +257,7 @@ func (c *googleConnector) createIdentity(ctx context.Context, identity connector
 func (c *googleConnector) getGroups(email string, fetchTransitiveGroupMembership bool, checkedGroups map[string]struct{}) ([]string, error) {
 	var userGroups []string
 	var err error
+	c.logger.Debugf("Checking group membership for %v", email)
 	groupsList := &admin.Groups{}
 	for {
 		groupsList, err = c.adminSrv.Groups.List().
@@ -267,6 +268,7 @@ func (c *googleConnector) getGroups(email string, fetchTransitiveGroupMembership
 
 		for _, group := range groupsList.Groups {
 			if _, exists := checkedGroups[group.Email]; exists {
+				c.logger.Debugf("%v already exists in group map", group.Email)
 				continue
 			}
 
